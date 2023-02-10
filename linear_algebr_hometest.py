@@ -204,18 +204,22 @@ def stationary_distribution(transition_matrix):
     stationary_dist = eigenvector / eigenvector.sum()
     
     return stationary_dist
-
+adjacency_mat_candy = nx.to_numpy_array(candyG)
 tran_mat_candy = transition_matrix(candyG)
 stationary_candy = stationary_distribution(tran_mat_candy)
 
+adjacency_mat_clique = nx.to_numpy_array(cliqueG)
 tran_mat_clique = transition_matrix(cliqueG)
 stationary_clique = stationary_distribution(tran_mat_clique)
 
+adjacency_mat_ring = nx.to_numpy_array(ringG)
 tran_mat_ring = transition_matrix(ringG)
 stationary_ring = stationary_distribution(tran_mat_ring)
 
+adjacency_mat_two_cliques = nx.to_numpy_array(two_cliques_G)
 tran_mat_two_cliques = transition_matrix(two_cliques_G)
 stationary_two_cliques = stationary_distribution(tran_mat_two_cliques)
+
 '''
 print("stationary candy: ")
 for i in stationary_candy:
@@ -228,8 +232,35 @@ for i in stationary_ring:
 print("stationary two cliques: ")
 for i in stationary_two_cliques:
     print(i)
-    '''
+
 print("stationary clique: ")
 for i in stationary_clique:
     print(i)
+'''
 
+#question 3
+def generalized_power_method(A, max_iterations=100, tolerance=1e-6):
+    n = A.shape[0]
+    x = np.random.rand(n)
+    x = x / np.linalg.norm(x)
+    for i in range(max_iterations):
+        y = A @ x
+        eigenvalue = np.dot(x, y)
+        if np.linalg.norm(y) == 0:
+            break
+        x = y / np.linalg.norm(y)
+        if np.abs(eigenvalue - np.dot(x, A @ x)) < tolerance:
+            break
+    return eigenvalue
+
+def ratio_of_first_two_eigenvalues(A):
+    eigenvalue1 = generalized_power_method(A)
+    A = A - eigenvalue1 * np.outer(np.ones(A.shape[0]), np.ones(A.shape[0]))
+    eigenvalue2 = generalized_power_method(A)
+    return eigenvalue1 / eigenvalue2
+
+print("two cliques: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_two_cliques)))
+print("candy: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_candy)))
+print("ring: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_ring)))
+print("clique: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_clique)))
+#יחס שלילי, יוצא שהערך העצמי השני שיוצא בכל מצב הוא שלילי בעוד שהראשון חיובי ונראה תקין
