@@ -21,11 +21,11 @@ def clique(n):
 
 cliqueG = clique(7)
 
-fig, ax = plt.subplots()
-nx.draw(cliqueG, with_labels=True, ax=ax)
-ax.set_title("Clique Graph")
+#fig, ax = plt.subplots()
+#nx.draw(cliqueG, with_labels=True, ax=ax)
+#ax.set_title("Clique Graph")
 
-plt.savefig("clique_graph.png")
+#plt.savefig("clique_graph.png")
 
 def ring(n):
     G = nx.Graph()
@@ -41,11 +41,11 @@ def ring(n):
 
 ringG = ring(7)
 
-fig, ax = plt.subplots()
-nx.draw(ringG, with_labels=True, ax=ax)
-ax.set_title("Ring Graph")
+#fig, ax = plt.subplots()
+#nx.draw(ringG, with_labels=True, ax=ax)
+#ax.set_title("Ring Graph")
 
-plt.savefig("ring_graph.png")
+#plt.savefig("ring_graph.png")
 
 
 def candy(n):
@@ -75,10 +75,10 @@ def candy(n):
 
 candyG= candy(7)
 
-fig, ax = plt.subplots()
-nx.draw(candyG, with_labels=True, ax=ax)
-ax.set_title("Candy Graph")
-plt.savefig("candy_graph.png")
+#fig, ax = plt.subplots()
+#nx.draw(candyG, with_labels=True, ax=ax)
+#ax.set_title("Candy Graph")
+#plt.savefig("candy_graph.png")
 
 def two_cliques(n):
     G = nx.Graph()
@@ -111,10 +111,10 @@ def two_cliques(n):
     return G
 
 two_cliques_G = two_cliques(16)
-fig, ax = plt.subplots()
-nx.draw(two_cliques_G, with_labels=True, ax=ax)
-ax.set_title("Two Cliques Graph")
-plt.savefig("two_cliques_graph.png")
+#fig, ax = plt.subplots()
+#nx.draw(two_cliques_G, with_labels=True, ax=ax)
+#ax.set_title("Two Cliques Graph")
+#plt.savefig("two_cliques_graph.png")
 '''
 #cover time and random walk code:
  #Performs a random walk on the graph and returns the number of steps it takes to visit all nodes.
