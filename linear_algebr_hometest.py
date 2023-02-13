@@ -19,7 +19,7 @@ def clique(n):
                 G.add_edge(i, j)
     return G
 
-cliqueG = clique(7)
+cliqueG = clique(14)
 
 #fig, ax = plt.subplots()
 #nx.draw(cliqueG, with_labels=True, ax=ax)
@@ -187,56 +187,49 @@ print("\n\n")
 
 #question 2
 def transition_matrix(G):
-    # Create the adjacency matrix
-    adjacency_matrix = nx.to_numpy_array(G)
-    
-    # Normalize the rows to obtain the transition matrix
-    transition_matrix = adjacency_matrix / np.sum(adjacency_matrix, axis=1)
-    
-    return transition_matrix
+    #adjacency_matrix = nx.adjacency_matrix(G)
+    #if adjacency_matrix.shape[0] == 0:
+    #    return None
+    #transition_matrix = np.zeros_like(adjacency_matrix)
+    #for i in range(adjacency_matrix.shape[0]):
+    #    if np.sum(adjacency_matrix[i, :]) != 0:
+    #        transition_matrix[i, :] = adjacency_matrix[i, :] / np.sum(adjacency_matrix[i, :])
+    #return transition_matrix
+    A = nx.to_numpy_array(G)
+    return A, A / A.sum(axis=1, keepdims=True)
+
 
 def stationary_distribution(transition_matrix):
     # Find the eigenvector corresponding to the eigenvalue of 1
     eigenvalues, eigenvectors = np.linalg.eig(transition_matrix.T)
-    eigenvector = eigenvectors[:, np.isclose(eigenvalues, 1)].flatten().real
-   
+    stationary = eigenvectors[:, np.isclose(eigenvalues, 1)].flatten().real
     # Normalize the eigenvector
-    stationary_dist = eigenvector / eigenvector.sum()
+    return stationary / stationary.sum()
     
-    return stationary_dist
-adjacency_mat_candy = nx.to_numpy_array(candyG)
-tran_mat_candy = transition_matrix(candyG)
+#adjacency_mat_candy = nx.to_numpy_array(candyG)
+adjacency_mat_candy, tran_mat_candy = transition_matrix(candyG)
 stationary_candy = stationary_distribution(tran_mat_candy)
 
-adjacency_mat_clique = nx.to_numpy_array(cliqueG)
-tran_mat_clique = transition_matrix(cliqueG)
+#adjacency_mat_clique = nx.to_numpy_array(cliqueG)
+adjacency_mat_clique, tran_mat_clique = transition_matrix(cliqueG)
 stationary_clique = stationary_distribution(tran_mat_clique)
 
-adjacency_mat_ring = nx.to_numpy_array(ringG)
-tran_mat_ring = transition_matrix(ringG)
+#adjacency_mat_ring = nx.to_numpy_array(ringG)
+adjacency_mat_ring, tran_mat_ring = transition_matrix(ringG)
 stationary_ring = stationary_distribution(tran_mat_ring)
 
-adjacency_mat_two_cliques = nx.to_numpy_array(two_cliques_G)
-tran_mat_two_cliques = transition_matrix(two_cliques_G)
+#adjacency_mat_two_cliques = nx.to_numpy_array(two_cliques_G)
+adjacency_mat_two_cliques, tran_mat_two_cliques = transition_matrix(two_cliques_G)
 stationary_two_cliques = stationary_distribution(tran_mat_two_cliques)
 
-'''
-print("stationary candy: ")
-for i in stationary_candy:
-    print(i)
+print("stationary candy:", stationary_candy)
 
-print("stationary ring: ")
-for i in stationary_ring:
-    print(i)
+print("stationary ring:", stationary_ring)
 
-print("stationary two cliques: ")
-for i in stationary_two_cliques:
-    print(i)
+print("stationary two cliques:", stationary_two_cliques)#for some reason only 1 value is different
 
-print("stationary clique: ")
-for i in stationary_clique:
-    print(i)
-'''
+print("stationary clique:", stationary_clique)
+
 
 #question 3
 def generalized_power_method(A, max_iterations=100, tolerance=1e-6):
