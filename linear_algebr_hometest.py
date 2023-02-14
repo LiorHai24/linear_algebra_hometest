@@ -21,7 +21,7 @@ def clique(n):
                 G.add_edge(i, j)
     return G
 
-cliqueG = clique(14)
+cliqueG = clique(16)
 
 #fig, ax = plt.subplots()
 #nx.draw(cliqueG, with_labels=True, ax=ax)
@@ -226,7 +226,8 @@ print("stationary clique:", stationary_clique)
 
 
 #question 3
-def compute_eigenvalue_ratio_with_power_iteration(adjacency_mat):
+def compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat):
+    ratios = []
     L = 1/4
     while L >= 1/128:
         # Compute the two largest eigenvalues and eigenvectors of the adjacency matrix
@@ -237,9 +238,10 @@ def compute_eigenvalue_ratio_with_power_iteration(adjacency_mat):
         
         # Calculate the ratio of the first and second eigenvalues
         ratio = sorted_eigenvalues[0] / sorted_eigenvalues[1]
-        print("Ratio:", ratio)
+        ratios.append(ratio)
         
         # Initialize the eigenvector estimate to a random vector
+        adjacency_mat = np.array(adjacency_mat)
         x = np.random.rand(adjacency_mat.shape[0])
         
         # Iterate until the distance between two consecutive iterations is less than or equal to L
@@ -255,23 +257,26 @@ def compute_eigenvalue_ratio_with_power_iteration(adjacency_mat):
         
         # Divide L by 2 for the next iteration
         L /= 2
-
-
-
-
-
-def normalize(v):
-    return v / np.linalg.norm(v)
+    
+    return ratios
 
 
 print("two cliques: ")
-compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_two_cliques)
+two_cliques_ratios = compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat_two_cliques)
+for i in two_cliques_ratios:
+    print(i)
 
 print("candy: ")
-compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_candy)
+candy_ratios = compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat_candy)
+for i in candy_ratios:
+    print(i)
 
 print("ring: ")
-compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_ring)
+ring_ratios = compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat_ring)
+for i in ring_ratios:
+    print(i)
 
 print("clique: ")
-compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_clique)
+clique_ratios = compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat_clique)
+for i in clique_ratios:
+    print(i)
