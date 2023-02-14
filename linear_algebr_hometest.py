@@ -1,6 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.sparse.linalg import eigsh
+from scipy.sparse import csr_matrix
 
 n = pow(2, 14)
 two_pow_13 =pow(2, 13)
@@ -187,14 +189,6 @@ print("\n\n")
 
 #question 2
 def transition_matrix(G):
-    #adjacency_matrix = nx.adjacency_matrix(G)
-    #if adjacency_matrix.shape[0] == 0:
-    #    return None
-    #transition_matrix = np.zeros_like(adjacency_matrix)
-    #for i in range(adjacency_matrix.shape[0]):
-    #    if np.sum(adjacency_matrix[i, :]) != 0:
-    #        transition_matrix[i, :] = adjacency_matrix[i, :] / np.sum(adjacency_matrix[i, :])
-    #return transition_matrix
     A = nx.to_numpy_array(G)
     return A, A / A.sum(axis=1, keepdims=True)
 
@@ -232,28 +226,52 @@ print("stationary clique:", stationary_clique)
 
 
 #question 3
-def generalized_power_method(A, max_iterations=100, tolerance=1e-6):
-    n = A.shape[0]
-    x = np.random.rand(n)
-    x = x / np.linalg.norm(x)
-    for i in range(max_iterations):
-        y = A @ x
-        eigenvalue = np.dot(x, y)
-        if np.linalg.norm(y) == 0:
-            break
-        x = y / np.linalg.norm(y)
-        if np.abs(eigenvalue - np.dot(x, A @ x)) < tolerance:
-            break
-    return eigenvalue
+def compute_eigenvalue_ratio_with_power_iteration(adjacency_mat):
+    L = 1/4
+    while L >= 1/128:
+        # Compute the two largest eigenvalues and eigenvectors of the adjacency matrix
+        eigenvalues, eigenvectors = eigsh(adjacency_mat, k=2, which='LM')
+        
+        # Sort the eigenvalues in descending order
+        sorted_eigenvalues = np.sort(eigenvalues)[::-1]
+        
+        # Calculate the ratio of the first and second eigenvalues
+        ratio = sorted_eigenvalues[0] / sorted_eigenvalues[1]
+        print("Ratio:", ratio)
+        
+        # Initialize the eigenvector estimate to a random vector
+        x = np.random.rand(adjacency_mat.shape[0])
+        
+        # Iterate until the distance between two consecutive iterations is less than or equal to L
+        prev_x = x.copy()
+        x = adjacency_mat @ x
+        x /= np.linalg.norm(x, ord=2)
+        distance = np.linalg.norm(x - prev_x, ord=2)
+        while distance > L:
+            prev_x = x.copy()
+            x = adjacency_mat @ x
+            x /= np.linalg.norm(x, ord=2)
+            distance = np.linalg.norm(x - prev_x, ord=2)
+        
+        # Divide L by 2 for the next iteration
+        L /= 2
 
-def ratio_of_first_two_eigenvalues(A):
-    eigenvalue1 = generalized_power_method(A)
-    A = A - eigenvalue1 * np.outer(np.ones(A.shape[0]), np.ones(A.shape[0]))
-    eigenvalue2 = generalized_power_method(A)
-    return eigenvalue1 / eigenvalue2
 
-print("two cliques: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_two_cliques)))
-print("candy: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_candy)))
-print("ring: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_ring)))
-print("clique: " + str(ratio_of_first_two_eigenvalues(adjacency_mat_clique)))
-#יחס שלילי, יוצא שהערך העצמי השני שיוצא בכל מצב הוא שלילי בעוד שהראשון חיובי ונראה תקין
+
+
+
+def normalize(v):
+    return v / np.linalg.norm(v)
+
+
+print("two cliques: ")
+compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_two_cliques)
+
+print("candy: ")
+compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_candy)
+
+print("ring: ")
+compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_ring)
+
+print("clique: ")
+compute_eigenvalue_ratio_with_power_iteration(adjacency_mat_clique)
