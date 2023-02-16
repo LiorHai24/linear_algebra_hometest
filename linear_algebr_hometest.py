@@ -59,7 +59,7 @@ def ring(n):
         G.add_node(i)
         G.add_edge(i,i)
     for i in range (1, n+1):
-        if i is n:
+        if i ==  n:
             G.add_edge(n,1)
         else:
             G.add_edge(i, i+1)
@@ -139,7 +139,7 @@ def two_cliques(n):
 
     return G
 
-two_cliques_G = two_cliques(two_pow_11)
+two_cliques_G = two_cliques(24)
 print("finished creating two cliques")
 
 #fig, ax = plt.subplots()
@@ -148,42 +148,27 @@ print("finished creating two cliques")
 #plt.savefig("two_cliques_graph.png")
 
 #question 2
-def transition_matrix(G):
-    A = nx.to_numpy_array(G)
-    return A, A / A.sum(axis=1, keepdims=True)
 
-'''
-def stationary_distribution(transition_matrix):
-    # Find the eigenvector corresponding to the eigenvalue of 1
-    eigenvalues, eigenvectors = np.linalg.eig(transition_matrix.T)
-    stationary = eigenvectors[:, np.isclose(eigenvalues, 1)].flatten().real
-    # Normalize the eigenvector
-    return stationary / stationary.sum()'''
-def stationary_distribution(transition_matrix):
-    w, v = np.linalg.eig(transition_matrix.T)
-    i = np.argmin(np.abs(w - 1.0))
-    stationary = v[:, i].real
-    stationary /= stationary.sum()
-    return stationary
+def stationary_distribution(G):
+    p = []
+    adjacency = nx.to_numpy_array(G)
+    for row in adjacency:
+        p.append(sum(row))
 
+    p = np.array(p)
+    return adjacency, p / p.sum()
 
-adjacency_mat_candy, tran_mat_candy = transition_matrix(candyG)
-stationary_candy = stationary_distribution(tran_mat_candy)
-print("stationary candy:", stationary_candy)
-
-adjacency_mat_clique,tran_mat_clique = transition_matrix(cliqueG)
-stationary_clique = stationary_distribution(tran_mat_clique)
+adjacency_mat_clique ,stationary_clique = stationary_distribution(cliqueG)
 print("stationary clique:", stationary_clique)
 
-adjacency_mat_ring, tran_mat_ring = transition_matrix(ringG)
-stationary_ring = stationary_distribution(tran_mat_ring)
+adjacency_mat_ring ,stationary_ring = stationary_distribution(ringG)
 print("stationary ring:", stationary_ring)
 
-adjacency_mat_two_cliques, tran_mat_two_cliques = transition_matrix(two_cliques_G)
-stationary_two_cliques = stationary_distribution(tran_mat_two_cliques)
+adjacency_mat_candy ,stationary_candy = stationary_distribution(candyG)
+print("stationary candy:", stationary_candy)
+
+adjacency_mat_two_cliques, stationary_two_cliques = stationary_distribution(two_cliques_G)
 print("stationary two cliques:", stationary_two_cliques)
-
-
 #question 2/2
 
     
@@ -271,19 +256,16 @@ def calculate_eigenvalue_ratio(A, L_values):
 # Example usage
 L_values = [1/4, 1/8, 1/16, 1/32, 1/64, 1/128]
 '''
-
+'''
 def generalized_power_algorithm(G, tol):
     # Initialize the vector x with random values
     x = np.random.rand(len(G))
     # Set the number of iterations and tolerance level
-    max_iter = 1000    
     # Run the power iteration
-    for i in range(max_iter):
+    while(np.linalg.norm(x - x_old) < tol):
         x_old = x
         x = G @ x
         x = x / np.linalg.norm(x)
-        if np.linalg.norm(x - x_old) < tol:
-            break
     
     # Calculate the first and second eigenvalues
     lambda1 = np.dot(x, G @ x)
@@ -327,7 +309,7 @@ for k in range(2, 7):
     ratio = generalized_power_algorithm(adjacency_mat_two_cliques, tol)
     # Print the ratio
     print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", ratio)
-
+'''
 '''
 two_cliques_ratios = calculate_eigenvalue_ratio(adjacency_mat_two_cliques, L_values)
 print("two cliques: ")
@@ -343,4 +325,5 @@ print(clique_ratios)
 
 ring_ratios = calculate_eigenvalue_ratio(adjacency_mat_ring, L_values)
 print("ring: ")
-print(ring_ratios)'''
+print(ring_ratios)
+'''
