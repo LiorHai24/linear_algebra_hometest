@@ -24,14 +24,14 @@ def clique(n):
     adjacency = nx.to_numpy_array(G)
     return G, adjacency
 
-cliqueG, adjacency_mat_clique= clique(10)
+cliqueG, adjacency_mat_clique= clique(two_pow_9)
 print("finished creating clique")
 
-fig, ax = plt.subplots()
-nx.draw(cliqueG, with_labels=True, ax=ax)
-ax.set_title("Clique Graph")
+#fig, ax = plt.subplots()
+#nx.draw(cliqueG, with_labels=True, ax=ax)
+#ax.set_title("Clique Graph")
 
-plt.savefig("clique_graph.png")
+#plt.savefig("clique_graph.png")
 '''
 def tree(n):
     G = nx.Graph()
@@ -66,14 +66,14 @@ def ring(n):
     adjacency = nx.to_numpy_array(G)
     return G, adjacency
 
-ringG, adjacency_mat_ring = ring(12)
+ringG, adjacency_mat_ring = ring(two_pow_9)
 print("finished creating ring")
 
-fig, ax = plt.subplots()
-nx.draw(ringG, with_labels=True, ax=ax)
-ax.set_title("Ring Graph")
+#fig, ax = plt.subplots()
+#nx.draw(ringG, with_labels=True, ax=ax)
+#ax.set_title("Ring Graph")
 
-plt.savefig("ring_graph.png")
+#plt.savefig("ring_graph.png")
 
 
 def candy(n):
@@ -103,13 +103,13 @@ def candy(n):
     adjacency = nx.to_numpy_array(G)
     return G, adjacency
 
-candyG ,adjacency_mat_candy= candy(16)
+candyG ,adjacency_mat_candy= candy(two_pow_9)
 print("finished creating candy")
 
-fig, ax = plt.subplots()
-nx.draw(candyG, with_labels=True, ax=ax)
-ax.set_title("Candy Graph")
-plt.savefig("candy_graph.png")
+#fig, ax = plt.subplots()
+#nx.draw(candyG, with_labels=True, ax=ax)
+#ax.set_title("Candy Graph")
+#plt.savefig("candy_graph.png")
 
 def two_cliques(n):
     G = nx.Graph()
@@ -142,13 +142,13 @@ def two_cliques(n):
     adjacency = nx.to_numpy_array(G)
     return G, adjacency
 
-two_cliques_G , adjacency_mat_two_cliques= two_cliques(16)
+two_cliques_G , adjacency_mat_two_cliques= two_cliques(two_pow_9)
 print("finished creating two cliques")
 
-fig, ax = plt.subplots()
-nx.draw(two_cliques_G, with_labels=True, ax=ax)
-ax.set_title("Two Cliques Graph")
-plt.savefig("two_cliques_graph.png")
+#fig, ax = plt.subplots()
+#nx.draw(two_cliques_G, with_labels=True, ax=ax)
+#ax.set_title("Two Cliques Graph")
+#plt.savefig("two_cliques_graph.png")
 
 #question 2
 '''
