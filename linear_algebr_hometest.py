@@ -21,17 +21,17 @@ def clique(n):
         for j in range(1, n+1):
             if(i < j):
                 G.add_edge(i, j)
-    
-    return G
+    adjacency = nx.to_numpy_array(G)
+    return G, adjacency
 
-cliqueG= clique(two_pow_11)
+cliqueG, adjacency_mat_clique= clique(10)
 print("finished creating clique")
 
-#fig, ax = plt.subplots()
-#nx.draw(cliqueG, with_labels=True, ax=ax)
-#ax.set_title("Clique Graph")
+fig, ax = plt.subplots()
+nx.draw(cliqueG, with_labels=True, ax=ax)
+ax.set_title("Clique Graph")
 
-#plt.savefig("clique_graph.png")
+plt.savefig("clique_graph.png")
 '''
 def tree(n):
     G = nx.Graph()
@@ -63,16 +63,17 @@ def ring(n):
             G.add_edge(n,1)
         else:
             G.add_edge(i, i+1)
-    return G
+    adjacency = nx.to_numpy_array(G)
+    return G, adjacency
 
-ringG = ring(two_pow_11)
+ringG, adjacency_mat_ring = ring(12)
 print("finished creating ring")
 
-#fig, ax = plt.subplots()
-#nx.draw(ringG, with_labels=True, ax=ax)
-#ax.set_title("Ring Graph")
+fig, ax = plt.subplots()
+nx.draw(ringG, with_labels=True, ax=ax)
+ax.set_title("Ring Graph")
 
-#plt.savefig("ring_graph.png")
+plt.savefig("ring_graph.png")
 
 
 def candy(n):
@@ -99,15 +100,16 @@ def candy(n):
 
     G.add_edge(n//2, (n//2)+1)
 
-    return G
+    adjacency = nx.to_numpy_array(G)
+    return G, adjacency
 
-candyG= candy(two_pow_11)
+candyG ,adjacency_mat_candy= candy(16)
 print("finished creating candy")
 
-#fig, ax = plt.subplots()
-#nx.draw(candyG, with_labels=True, ax=ax)
-#ax.set_title("Candy Graph")
-#plt.savefig("candy_graph.png")
+fig, ax = plt.subplots()
+nx.draw(candyG, with_labels=True, ax=ax)
+ax.set_title("Candy Graph")
+plt.savefig("candy_graph.png")
 
 def two_cliques(n):
     G = nx.Graph()
@@ -122,7 +124,7 @@ def two_cliques(n):
     # Connect the clique vertices
     for i in range((n//2)+1,(3*n//4)+1):
         for j in range((n//2)+1, (3*n//4)+1):
-            if i < j:
+            if i <= j:
                 G.add_edge(i, j)
 
 
@@ -130,200 +132,161 @@ def two_cliques(n):
     # Connect the clique vertices
     for i in range((3*n//4) +1, n+1):
         for j in range((3*n//4) +1, n+1):
-            if i < j:
+            if i <= j:
                 G.add_edge(i, j)
     
 
     G.add_edge(1, (n//2)+1)
     G.add_edge(n//2, (3*n//4) +1)
+    
+    adjacency = nx.to_numpy_array(G)
+    return G, adjacency
 
-    return G
-
-two_cliques_G = two_cliques(24)
+two_cliques_G , adjacency_mat_two_cliques= two_cliques(16)
 print("finished creating two cliques")
 
-#fig, ax = plt.subplots()
-#nx.draw(two_cliques_G, with_labels=True, ax=ax)
-#ax.set_title("Two Cliques Graph")
-#plt.savefig("two_cliques_graph.png")
+fig, ax = plt.subplots()
+nx.draw(two_cliques_G, with_labels=True, ax=ax)
+ax.set_title("Two Cliques Graph")
+plt.savefig("two_cliques_graph.png")
 
 #question 2
-
-def stationary_distribution(G):
+'''
+def stationary_distribution(adjacency):
     p = []
-    adjacency = nx.to_numpy_array(G)
+    #adjacency = nx.to_numpy_array(G)
     for row in adjacency:
         p.append(sum(row))
 
     p = np.array(p)
-    return adjacency, p / p.sum()
+    return p / p.sum()#, adjacency
 
-adjacency_mat_clique ,stationary_clique = stationary_distribution(cliqueG)
+stationary_clique = stationary_distribution(adjacency_mat_clique)
 print("stationary clique:", stationary_clique)
 
-adjacency_mat_ring ,stationary_ring = stationary_distribution(ringG)
+stationary_ring = stationary_distribution(adjacency_mat_ring)
 print("stationary ring:", stationary_ring)
 
-adjacency_mat_candy ,stationary_candy = stationary_distribution(candyG)
+stationary_candy = stationary_distribution(adjacency_mat_candy)
 print("stationary candy:", stationary_candy)
 
-adjacency_mat_two_cliques, stationary_two_cliques = stationary_distribution(two_cliques_G)
-print("stationary two cliques:", stationary_two_cliques)
+stationary_two_cliques = stationary_distribution(adjacency_mat_two_cliques)
+print("stationary two cliques:", stationary_two_cliques)'''
 #question 2/2
-
+'''
+def pagerank(M, num_iterations=100, d=0.85):
+    """
+    Implements the PageRank algorithm for computing the importance of web pages.
+    M: adjacency matrix where M[i][j] is 1 if there is a link from page j to page i, 0 otherwise
+    num_iterations: number of iterations to run the algorithm
+    d: damping factor
+    """
+    N = len(M)
+    v = np.random.rand(N, 1)
+    v = v / np.linalg.norm(v, 1)
+    M_hat = (d * M + (1 - d) / N)
+    for i in range(num_iterations):
+        v = M_hat @ v
+    return v
     
-
+'''
 #question 3
-'''
-def compute_eigenvalue_ratio_with_generalized_power_iteration(adjacency_mat):
-    ratios = []
-    L = 1/4
-    while L >= 1/128:
-        # Compute the two largest eigenvalues and eigenvectors of the adjacency matrix
-        eigenvalues, eigenvectors = eigsh(adjacency_mat, k=2, which='LM')
-        
-        # Sort the eigenvalues in descending order
-        sorted_eigenvalues = np.sort(eigenvalues)[::-1]
-        
-        # Calculate the ratio of the first and second eigenvalues
-        ratio = sorted_eigenvalues[0] / sorted_eigenvalues[1]
-        ratios.append(ratio)
-        
-        # Initialize the eigenvector estimate to a random vector
-        adjacency_mat = np.array(adjacency_mat)
-        x = np.random.rand(adjacency_mat.shape[0])
-        
-        # Iterate until the distance between two consecutive iterations is less than or equal to L
-        prev_x = x.copy()
-        x = adjacency_mat @ x
-        x /= np.linalg.norm(x, ord=2)
-        distance = np.linalg.norm(x - prev_x, ord=2)
-        while distance > L:
-            prev_x = x.copy()
-            x = adjacency_mat @ x
-            x /= np.linalg.norm(x, ord=2)
-            distance = np.linalg.norm(x - prev_x, ord=2)
-        
-        # Divide L by 2 for the next iteration
-        L /= 2
-    
-    return ratios
+ # Define power iteration method
+def power_iteration(A, v):
+    Av = np.dot(A,v)
+    v_new = Av / np.linalg.norm(Av)
+    return v_new
 
-'''
-'''
-def power_iteration(A, L):
-    A=np.array(A)
-    n = A.shape[0]
-    x0 = np.random.rand(n)
-    x0 /= np.linalg.norm(x0)
+def get_highest_eigenvalue(graph,A, tol):
+    # Initialize random vector
+    x = np.random.rand(len(graph))
+   
+    # Calculate adjacency matrix and normalize to obtain transition matrix
+    D = np.diag(np.sum(A, axis=1))
+   # P = np.linalg.inv(D).dot(A)
 
-    for i in range(1000):
-        y = A.dot(x0)
-        x1 = y / np.linalg.norm(y)
-        if np.linalg.norm(x1 - x0) < L:
+    lambda_1_old = 0
+    old_x = x
+    while True:
+        x = power_iteration(A, x)
+        a = np.dot(x,A)
+        b = np.dot(a, x)
+        lambda_1 = b / np.dot(x,x)
+
+        #if abs(lambda_1 - lambda_1_old) < tol:
+        if abs(np.linalg.norm(x-old_x)) < tol:
             break
-        x0 = x1
+        lambda_1_old = lambda_1
+        old_x = x
+        
+    return lambda_1, x
 
-    return x1
+def projection(u, v):
+    # calculate dot product of u and v
+        dot_uv = np.dot(u, v)
 
-def shifted_power_iteration(A, lambda1, L):
-    A=np.array(A)
-    n = A.shape[0]
-    x0 = np.random.rand(n)
-    x0 /= np.linalg.norm(x0)
+    # calculate dot product of u with itself
+        dot_uu = np.dot(u, u)
 
-    B = A - lambda1 * np.eye(n)
-    B = np.array(B)
-    for i in range(1000):
-        y = B.dot(x0)
-        x2 = y / np.linalg.norm(y)
-        if np.linalg.norm(x2 - x0) < L:
+    # calculate projection of v onto u
+        proj_uv = (dot_uv / dot_uu) * u
+        return proj_uv
+
+def get_2nd_highest_eigenvalue(graph,A,v, tol):
+    w = np.random.rand(len(graph))
+
+    proj_uv = projection(v, w)
+    u = w - proj_uv
+
+    D = np.diag(np.sum(A, axis=1))
+    #P = np.linalg.inv(D).dot(A)
+
+    lambda_2_old = 0
+    old_u = u
+    while True:
+        u = power_iteration(A, u)
+        a = np.dot(u,A)
+        b = np.dot(a, u)
+        lambda_2 = b / np.dot(u,u)
+        #if abs(lambda_2 - lambda_2_old) < tol:
+        if abs(np.linalg.norm(u - old_u)) < tol:
             break
-        x0 = x2
+        lambda_2_old = lambda_2
+        old_u = u
+        
+    return lambda_2
 
-    return x2
-
-def calculate_eigenvalue_ratio(A, L_values):
-    ratios = []
-    for L in L_values[:-1]:
-        ratios.append("for {}:".format(L))
-        lambda1_new = power_iteration(A, L)
-        lambda2_new = shifted_power_iteration(A, lambda1_new, L)
-        ratios.append(lambda1_new / lambda2_new)
-
-    return ratios
-
-# Example usage
-L_values = [1/4, 1/8, 1/16, 1/32, 1/64, 1/128]
-'''
-'''
-def generalized_power_algorithm(G, tol):
-    # Initialize the vector x with random values
-    x = np.random.rand(len(G))
-    # Set the number of iterations and tolerance level
-    # Run the power iteration
-    while(np.linalg.norm(x - x_old) < tol):
-        x_old = x
-        x = G @ x
-        x = x / np.linalg.norm(x)
-    
-    # Calculate the first and second eigenvalues
-    lambda1 = np.dot(x, G @ x)
-    lambda2 = np.dot(x, G @ G @ x)
-    
-    # Return the ratio of the first and second eigenvalues
-    return lambda1 / lambda2
+def get_2_highest(G, A, tol):
+    lambda_1, x= get_highest_eigenvalue(G, A, tol)
+    lambda_2= get_2nd_highest_eigenvalue(G, A, x, tol)
+    return lambda_1, lambda_2
 
 print("for clique:")
 for k in range(2, 7):
-    # Compute the tolerance level as 2^-k
     tol = 2 ** -k
-    # Compute the ratio of the first and second eigenvalues using the generalized power algorithm
-    ratio = generalized_power_algorithm(adjacency_mat_clique, tol)
-    # Print the ratio
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", ratio)
-
+    first, second = get_2_highest(cliqueG, adjacency_mat_clique, tol)
+    print(first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+    
 print("for ring:")
 for k in range(2, 7):
-    # Compute the tolerance level as 2^-k
     tol = 2 ** -k
-    # Compute the ratio of the first and second eigenvalues using the generalized power algorithm
-    ratio = generalized_power_algorithm(adjacency_mat_ring, tol)
-    # Print the ratio
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", ratio)
+    first, second = get_2_highest(ringG, adjacency_mat_ring, tol)
+    print(first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+
 
 print("for candy:")
 for k in range(2, 7):
-    # Compute the tolerance level as 2^-k
     tol = 2 ** -k
-    # Compute the ratio of the first and second eigenvalues using the generalized power algorithm
-    ratio = generalized_power_algorithm(adjacency_mat_candy, tol)
-    # Print the ratio
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", ratio)
+    first, second = get_2_highest(candyG, adjacency_mat_candy, tol)
+    print(first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+
 
 print("for two cliques:")
 for k in range(2, 7):
-    # Compute the tolerance level as 2^-k
     tol = 2 ** -k
-    # Compute the ratio of the first and second eigenvalues using the generalized power algorithm
-    ratio = generalized_power_algorithm(adjacency_mat_two_cliques, tol)
-    # Print the ratio
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", ratio)
-'''
-'''
-two_cliques_ratios = calculate_eigenvalue_ratio(adjacency_mat_two_cliques, L_values)
-print("two cliques: ")
-print(two_cliques_ratios)
-
-candy_ratios = calculate_eigenvalue_ratio(adjacency_mat_candy, L_values)
-print("candy: ")
-print(candy_ratios)
-
-clique_ratios = calculate_eigenvalue_ratio(adjacency_mat_clique, L_values)
-print("clique: ")
-print(clique_ratios)
-
-ring_ratios = calculate_eigenvalue_ratio(adjacency_mat_ring, L_values)
-print("ring: ")
-print(ring_ratios)
-'''
+    first, second = get_2_highest(two_cliques_G, adjacency_mat_two_cliques, tol)
+    print(first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
