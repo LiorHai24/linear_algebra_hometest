@@ -11,18 +11,32 @@ two_pow_12 =pow(2, 12)
 two_pow_11 =pow(2, 11)
 two_pow_10 =pow(2, 10)
 two_pow_9 =pow(2, 9)
-
+'''
 def normalize_mat(adjacency):
     # Calculate row sums
-    row_sums = np.sum(adjacency, axis=1)
+    row_sums = np.sum(adjacency, axis=0)
 
     # Create diagonal matrix with inverse of row sums
-    D = np.diag(1 / np.sqrt(row_sums))
-
+    #D = np.diag(1 / row_sums)
+    
+    for row in adjacency:
+        for i in row:
+            if i != 0:
+                D[row][i] = 1 / row_sums
     # Normalize adjacency matrix
-    normalized_adj_matrix = D.dot(adjacency)
+    #normalized_adj_matrix = D.dot(adjacency)
 
-    return normalized_adj_matrix
+    return D'''
+def normalize_mat(matrix):
+    new_matrix = []
+    for row in matrix:
+        count_ones = sum(row)
+        if count_ones > 0:
+            new_row = [1/count_ones if val == 1 else val for val in row]
+        else:
+            new_row = row
+        new_matrix.append(new_row)
+    return new_matrix
 
 def clique(n):
     G = nx.Graph()
@@ -169,7 +183,7 @@ print("finished creating two cliques")
 #plt.savefig("two_cliques_graph.png")
 
 #question 2
-
+'''
 def stationary_distribution(mat):
     p = []
     #adjacency = nx.to_numpy_array(G)
@@ -195,7 +209,7 @@ norm_mat_two_cliques = normalize_mat(adjacency_mat_two_cliques)
 stationary_two_cliques = stationary_distribution(norm_mat_two_cliques)
 print("stationary two cliques:", stationary_two_cliques)
 #question 2/2
-
+'''
 '''
 def pagerank(M, num_iterations=100, d = pow(2,-6)):#d = 0.85
     """
@@ -217,7 +231,6 @@ print(pagerank(adjacency_mat_ring))
 #question 3
 
  # Define power iteration method
-'''
 #in progress
 def power_iteration(A, v):
     Av = np.dot(A,v)
@@ -273,8 +286,9 @@ def get_2nd_highest_eigenvalue(graph,A,u, tol):
         #to find new u
         wt = np.dot(A, old_u)
         vt = wt - projection(u, wt)
+        
         #print(np.linalg.norm(vt))
-        new_u = vt / np.linalg.norm(vt)
+        new_u = vt / np.linalg.norm(vt)#קבוע הכי קטן
 
         #to get the eigenvalue
         a = np.dot(new_u,A)
@@ -293,34 +307,45 @@ def get_2_highest(G, A, tol):
     lambda_1, x = get_highest_eigenvalue(G, A, tol)
     lambda_2 = get_2nd_highest_eigenvalue(G, A, x, tol)
     return lambda_1, lambda_2
-
-print("for clique:")
-for k in range(2, 7):
-    tol = 2 ** -k
-    first, second = get_2_highest(cliqueG, norm_mat_clique, tol)
-    print(first, second)
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
-    
-print("for ring:")
-for k in range(2, 7):
-    tol = 2 ** -k
-    first, second = get_2_highest(ringG, norm_mat_ring, tol)
-    print(first, second)
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+'''
 
 
-print("for candy:")
-for k in range(2, 7):
-    tol = 2 ** -k
-    first, second = get_2_highest(candyG, norm_mat_candy, tol)
-    print(first, second)
-    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
-
+'''
 
 print("for two cliques:")
 for k in range(2, 7):
     tol = 2 ** -k
     first, second = get_2_highest(two_cliques_G, norm_mat_two_cliques, tol)
-    print(first, second)
+    print("from power function:", first, second)
     print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
-'''
+
+print("for candy:")
+for k in range(2, 7):
+    tol = 2 ** -k
+    first, second = get_2_highest(candyG, norm_mat_candy, tol)
+    print("from power function:", first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+
+
+print("for clique:")
+for k in range(2, 7):
+    tol = 2 ** -k
+    first, second = get_2_highest(cliqueG, norm_mat_clique, tol)
+    print("from power function:", first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+
+print("for ring:")
+for k in range(2, 7):
+    tol = 2 ** -k
+    first, second = get_2_highest(ringG, norm_mat_ring, tol)
+    print("from power function:",first, second)
+    print("Tolerance level:", tol, "Ratio of first and second eigenvalues:", first/second)
+
+
+
+
+w, v = np.linalg.eig(norm_mat_ring)
+idx = np.argsort(w)[::-1]  # Get indices that sort eigenvalues in descending order
+w = w[idx]
+v = v[:, idx]
+print("from eig function:", w[0], w[1])

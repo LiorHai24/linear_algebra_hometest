@@ -1,12 +1,11 @@
 import networkx as nx
 import numpy as np
-
 import math
 from scipy.sparse.linalg import eigsh
 from scipy.sparse import csr_matrix
 from sklearn.preprocessing import normalize
 
-n = pow(2, 14)
+n = 17#pow(2, 14)
 
 #graphs
 def normalize_mat(adjacency):
@@ -21,6 +20,7 @@ def normalize_mat(adjacency):
 
     return normalized_adj_matrix
 '''
+
 def clique(n):
     G = nx.Graph()
     for i in range (1, n+1):
@@ -80,13 +80,14 @@ def ring(n):
 
 ringG, adjacency_mat_ring = ring(n )
 norm_mat_ring = normalize_mat(adjacency_mat_ring)
-#print("finished creating ring")
+print("finished creating ring")
 
 #fig, ax = plt.subplots()
 #nx.draw(ringG, with_labels=True, ax=ax)
 #ax.set_title("Ring Graph")
 
 #plt.savefig("ring_graph.png")
+'''
 
 
 def candy(n):
@@ -118,7 +119,7 @@ def candy(n):
 
 candyG ,adjacency_mat_candy= candy(n )
 norm_mat_candy = normalize_mat(adjacency_mat_candy)
-#print("finished creating candy")
+print("finished creating candy")
 
 #fig, ax = plt.subplots()
 #nx.draw(candyG, with_labels=True, ax=ax)
@@ -158,7 +159,8 @@ def two_cliques(n):
 
 two_cliques_G , adjacency_mat_two_cliques= two_cliques(n )
 norm_mat_two_cliques = normalize_mat(adjacency_mat_two_cliques)
-#print("finished creating two cliques")
+print("finished creating two cliques")
+'''
 
 #fig, ax = plt.subplots()
 #nx.draw(two_cliques_G, with_labels=True, ax=ax)
@@ -175,43 +177,26 @@ def stationary_distribution(mat):
     p = np.array(p)
     return p / p.sum()#, adjacency
 
-def normalize_mat(adjacency):
-    # Calculate row sums
-    row_sums = np.sum(adjacency, axis=1)
-
-    # Create diagonal matrix with inverse of row sums
-    D = np.diag(1 / np.sqrt(row_sums))
-
-    # Normalize adjacency matrix
-    normalized_adj_matrix = D.dot(adjacency)
-
-    return normalized_adj_matrix
-
-def stationary_distribution(mat):
-    p = []
-    #adjacency = nx.to_numpy_array(G)
-    for row in mat:
-        p.append(sum(row))
-
-    p = np.array(p)
-    return p / p.sum()#, adjacency
-
-#norm_mat_clique = normalize_mat(adjacency_mat_clique)
-#stationary_clique = stationary_distribution(norm_mat_clique)
-#print("stationary clique:", stationary_clique)
-
-norm_mat_ring = normalize_mat(adjacency_mat_ring)
+#norm_mat_ring = normalize_mat(adjacency_mat_ring)
 stationary_ring = stationary_distribution(norm_mat_ring)
-#print("stationary ring:", stationary_ring)
+print("stationary ring:", stationary_ring)
 
-norm_mat_candy = normalize_mat(adjacency_mat_candy)
+
+'''
+#norm_mat_clique = normalize_mat(adjacency_mat_clique)
+stationary_clique = stationary_distribution(norm_mat_clique)
+print("stationary clique:", stationary_clique)
+
+#norm_mat_candy = normalize_mat(adjacency_mat_candy)
 stationary_candy = stationary_distribution(norm_mat_candy)
-#print("stationary candy:", stationary_candy)
+print("stationary candy:", stationary_candy)
 
-norm_mat_two_cliques = normalize_mat(adjacency_mat_two_cliques)
+#norm_mat_two_cliques = normalize_mat(adjacency_mat_two_cliques)
 stationary_two_cliques = stationary_distribution(norm_mat_two_cliques)
-#print("stationary two cliques:", stationary_two_cliques)
+print("stationary two cliques:", stationary_two_cliques)
 
+
+'''
 '''
 adjacency_mat_clique ,stationary_clique = stationary_distribution(cliqueG)
 print("stationary clique:", stationary_clique)
@@ -270,7 +255,7 @@ def rand_walk_loop(G, n, stat_vec):
             while(curr_delta > wanted_delta):
                 counter+=1
                 #rand_node = np.random.choice(list(G.nodes()))
-                cover_time += random_walk(G, rand_node, N, page_rank_dict, stat_vec, wanted_delta)
+                cover_time += random_walk(G, 2, N, page_rank_dict, stat_vec, wanted_delta)#n to rand_node
                 probability_vector = histogram(page_rank_dict, counter)
                 curr_delta =stat_vec- probability_vector
                 curr_delta = np.linalg.norm( curr_delta)
@@ -297,4 +282,4 @@ def rand_walk_loop(G, n, stat_vec):
     print(sum(probability_vector) / n)
 '''
 #round(n * math.log(n,2))
-rand_walk_loop(two_cliques_G, n, stationary_two_cliques)
+rand_walk_loop(ringG, n, stationary_ring)
